@@ -1,5 +1,5 @@
-title: A Web Crawler With asyncio Coroutines
-author: A. Jesse Jiryu Davis and Guido van Rossum
+# A Web Crawler With asyncio Coroutines #
+**A. Jesse Jiryu Davis and Guido van Rossum**
 
 _A. Jesse Jiryu Davis is a staff engineer at MongoDB in New York. He wrote Motor, the async MongoDB Python driver, and he is the lead developer of the MongoDB C Driver and a member of the PyMongo team. He contributes to asyncio and Tornado. He writes at [http://emptysqua.re](http://emptysqua.re)._
 
@@ -344,7 +344,7 @@ The `foo` function loads `bar` onto its stack and calls it, then pops its return
 
 When `PyEval_EvalFrameEx` encounters the `CALL_FUNCTION` bytecode, it creates a new Python stack frame and recurses: that is, it calls `PyEval_EvalFrameEx` recursively with the new frame, which is used to execute `bar`.
 
-\aosafigure[240pt]{crawler-images/function-calls.png}{Function Calls}{500l.crawler.functioncalls}
+![Function Calls](/crawler/crawler-images/function-calls.png)
 
 It is crucial to understand that Python stack frames are allocated in heap memory! The Python interpreter is a normal C program, so its stack frames are normal stack frames. But the *Python* stack frames it manipulates are on the heap. Among other surprises, this means a Python stack frame can outlive its function call. To see this interactively, save the current frame from within `bar`:
 
@@ -408,7 +408,7 @@ A Python generator encapsulates a stack frame plus a reference to some code, the
 
 All generators from calls to `gen_fn` point to this same code. But each has its own stack frame. This stack frame is not on any actual stack, it sits in heap memory waiting to be used:
 
-\aosafigure[240pt]{crawler-images/generator.png}{Generators}{500l.crawler.generators}
+![Generators](/crawler/crawler-images/generator.png)
 
 The frame has a "last instruction" pointer, the instruction it executed most recently. In the beginning, the last instruction pointer is -1, meaning the generator has not begun:
 
@@ -728,7 +728,7 @@ loop()
 
 When `read` yields a future, the task receives it through the channel of `yield from` statements, precisely as if the future were yielded directly from `fetch`. When the loop resolves a future, the task sends its result into `fetch`, and the value is received by `read`, exactly as if the task were driving `read` directly:
 
-\aosafigure[240pt]{crawler-images/yield-from.png}{Yield From}{500l.crawler.yieldfrom}
+![Yield From](/crawler/crawler-images/yield-from.png)
 
 To perfect our coroutine implementation, we polish out one mar: our code uses `yield` when it waits for a future, but `yield from` when it delegates to a sub-coroutine. It would be more refined if we used `yield from` whenever a coroutine pauses. Then a coroutine need not concern itself with what type of thing it awaits.
 
@@ -938,7 +938,7 @@ New URLs have ten redirects remaining. Fetching this particular URL results in a
 
 The `aiohttp` package we use would follow redirects by default and give us the final response. We tell it not to, however, and handle redirects in the crawler, so it can coalesce redirect paths that lead to the same destination: if we have already seen this URL, it is in ``self.seen_urls`` and we have already started on this path from a different entry point:
 
-\aosafigure[240pt]{crawler-images/redirects.png}{Redirects}{500l.crawler.redirects}
+![Redirects](/crawler/crawler-images/redirects.png)
 
 The crawler fetches "foo" and sees it redirects to "baz", so it adds "baz" to the queue and to ``seen_urls``. If the next page it fetches is "bar", which also redirects to "baz", the fetcher does not enqueue "baz" again.
 
